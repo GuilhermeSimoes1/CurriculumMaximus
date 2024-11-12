@@ -486,37 +486,40 @@ public class CurriculumGUI extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        User toUser = new User(txtTo.getText());
-        try {
-            toUser.loadPublic();
-            Certification c;
-            c = new Certification(
-                    user,
-                    toUser,
-                    txtEvento.getText()
-            );
-            temp = temp.add(c);
-            temp.saveToFile(fileTempTree);
-            if (temp.getNumberOfElemensts() >= 4) {
-                //System.out.println(temp.toString());
-                blockChain1.add(temp.getRoot(), (int) 9);
-                temp.saveToFile(blockChain1.getLastBlockHash() + ".mkt");
-                merkleGraphics1.setMerkle(temp);
-                temp = new MerkleTree();
-                updateBlockList();
-                saveBlockchain(blockChain1);
-                DefaultListModel model = new DefaultListModel();
-                ListTempTree.setModel(model);
-            } else {
-                DefaultListModel model = new DefaultListModel();
-                for (Certification tempC : (List<Certification>) temp.getElements()) {
-                    model.addElement(tempC.toString());
+
+        new Thread(() -> {
+            User toUser = new User(txtTo.getText());
+            try {
+                toUser.loadPublic();
+                Certification c;
+                c = new Certification(
+                        user,
+                        toUser,
+                        txtEvento.getText()
+                );
+                temp = temp.add(c);
+                temp.saveToFile(fileTempTree);
+                if (temp.getNumberOfElemensts() >= 4) {
+                    //System.out.println(temp.toString());
+                    blockChain1.add(temp.getRoot(), (int) 9);
+                    temp.saveToFile(blockChain1.getLastBlockHash() + ".mkt");
+                    merkleGraphics1.setMerkle(temp);
+                    temp = new MerkleTree();
+                    updateBlockList();
+                    saveBlockchain(blockChain1);
+                    DefaultListModel model = new DefaultListModel();
+                    ListTempTree.setModel(model);
+                } else {
+                    DefaultListModel model = new DefaultListModel();
+                    for (Certification tempC : (List<Certification>) temp.getElements()) {
+                        model.addElement(tempC.toString());
+                    }
+                    ListTempTree.setModel(model);
                 }
-                ListTempTree.setModel(model);
+            } catch (Exception ex) {
+                Logger.getLogger(CurriculumGUI.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (Exception ex) {
-            Logger.getLogger(CurriculumGUI.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }).start();
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
