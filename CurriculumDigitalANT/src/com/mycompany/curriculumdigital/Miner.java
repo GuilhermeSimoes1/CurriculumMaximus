@@ -4,6 +4,8 @@
  */
 package com.mycompany.curriculumdigital;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  *
  * @author Gui and Rodrigo
@@ -20,40 +22,36 @@ public class Miner extends Thread {
      * Valor máximo do nonce, definido como 1 bilhão.
      */
     public static int Max_Nonce = (int) 1E9;
-    String data;
-    int difficulty;
-    int startNonce;
-    int endNonce;
-    static volatile boolean found = false;  // Controla a parada das threads
-    static String resultHash;
-    static int resultNonce;
+        AtomicInteger ticketNonce;
+        AtomicInteger truenonce;
+        String data;
+        int dificulty;
 
-    public Miner(int startNonce, int endNonce) {
-        this.startNonce = startNonce;
-        this.endNonce = endNonce;
-        this.found = false;
+    public Miner(AtomicInteger nonce, AtomicInteger truenonce, String data, int dificulty) {
+            this.ticketNonce = nonce;
+            this.truenonce = truenonce;
+            this.data = data;
+            this.dificulty = dificulty;
     }
 
      @Override
-    public void run() {
-        String zeros = String.format("%0" + difficulty + "d", 0);
+        public void run() {
+            //String of zeros
+            String zeros = String.format("%0" + dificulty + "d", 0);
+            //starting nonce
 
-        for (int nonce = startNonce; nonce <= endNonce && !found; nonce++) {
-            String hash = Hash.getHash(nonce + data);
-
-            if (hash.endsWith(zeros)) {
-                synchronized (Miner.class) {
-                    if (!found) {
-                        found = true;
-                        resultHash = hash;
-                        resultNonce = nonce;
-                        System.out.println("Nonce encontrado: " + nonce);
-                    }
+            while (truenonce.get() == 0) {
+                //calculate hash of block
+                int nonce = ticketNonce.getAndIncrement();
+                String hash = Hash.getHash(nonce + data);
+                //DEBUG .... DEBUG .... DEBUG .... DEBUG .... DEBUG .... DEBUG
+                //System.out.println(nonce + " " + hash);
+                //Nounce found
+                if (hash.endsWith(zeros)) {
+                    truenonce.set(nonce);
                 }
-                break;
             }
         }
-    }
 
     /**
      * Método que encontra o valor de nonce que, quando combinado com os dados
@@ -66,26 +64,43 @@ public class Miner extends Thread {
      * @return O valor de nonce que gera um hash válido de acordo com a
      * dificuldade.
      */
-    public static int Nonce() {
+    public static double GetNonce(String data, int dif) {
         int procs = Runtime.getRuntime().availableProcessors();
-        int range = Max_Nonce/procs;
+        Miner thr[]  = new Miner[procs];
+        AtomicInteger shNonce = new AtomicInteger(0);
+        AtomicInteger trNonce = new AtomicInteger(0);
         
-        Miner miner[] = new Miner[procs];
-        
-        for(int i = 0; i<miner.length; i++){
-            int startNonce = range * i;
-            int endNonce = range * (i+1);
-            miner[i] = new Miner(startNonce,endNonce);
-            miner[i].start();
+        for(int i = 0; i < procs; i++){
+            thr[i] = new Miner(shNonce,trNonce,data,dif);
+            thr[i].start();
         }
         
-        // Não chamamos join(), pois queremos que o método termine assim que `found` for `true`
-        while (!found) {
-            // Loop vazio para aguardar até que `found` seja `true`
+        try{
+            
+            thr[0].join();
+        
+        }catch (InterruptedException ex){
+                
+            System.out.println("Erro");
+                  
         }
         
-        
-
-        return resultNonce;
+        return trNonce.get();
+          
     }
+    
+    public static void main(String[] args) {
+        String texto = "OLa";
+        System.out.println(""+ GetNonce(texto,5));
+        
+        long start = System.currentTimeMillis();
+        GetNonce(texto,5);
+        long end = System.currentTimeMillis();
+        
+        long MinerAcel = end - start;
+        
+        System.out.println(""+ MinerAcel);
+        
+    }
+    
 }
