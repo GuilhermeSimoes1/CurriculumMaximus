@@ -18,10 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Miner extends Thread {
 
-    /**
-     * Valor máximo do nonce, definido como 1 bilhão.
-     */
-    public static int Max_Nonce = (int) 1E9;
+    
         AtomicInteger ticketNonce;
         AtomicInteger truenonce;
         String data;
@@ -64,9 +61,9 @@ public class Miner extends Thread {
      * @return O valor de nonce que gera um hash válido de acordo com a
      * dificuldade.
      */
-    public static double GetNonce(String data, int dif) {
+    public static int GetNonce(String data, int dif) {
         int procs = Runtime.getRuntime().availableProcessors();
-        Miner thr[]  = new Miner[procs];
+        Miner[] thr  = new Miner[procs];
         AtomicInteger shNonce = new AtomicInteger(0);
         AtomicInteger trNonce = new AtomicInteger(0);
         

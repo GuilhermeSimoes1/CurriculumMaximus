@@ -54,7 +54,7 @@ public class BlockChain implements Serializable {
         // Hash do bloco anterior
         String prevHash = getLastBlockHash();
         // Mineração do bloco
-        int nonce = Miner.getNonce(prevHash + data, dificulty);
+        int nonce = Miner.GetNonce(prevHash + data,dificulty);
         // Criação do novo bloco
         Block newBlock = new Block(prevHash, data, nonce);
         // Adiciona o novo bloco à cadeia

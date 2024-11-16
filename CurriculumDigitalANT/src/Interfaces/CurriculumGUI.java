@@ -486,7 +486,7 @@ public class CurriculumGUI extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-
+        jButton1.setEnabled(false);
         new Thread(() -> {
             User toUser = new User(txtTo.getText());
             try {
@@ -501,7 +501,7 @@ public class CurriculumGUI extends javax.swing.JFrame {
                 temp.saveToFile(fileTempTree);
                 if (temp.getNumberOfElemensts() >= 4) {
                     //System.out.println(temp.toString());
-                    blockChain1.add(temp.getRoot(), (int) 9);
+                    blockChain1.add(temp.getRoot(), (int) 7);
                     temp.saveToFile(blockChain1.getLastBlockHash() + ".mkt");
                     merkleGraphics1.setMerkle(temp);
                     temp = new MerkleTree();
@@ -509,15 +509,18 @@ public class CurriculumGUI extends javax.swing.JFrame {
                     saveBlockchain(blockChain1);
                     DefaultListModel model = new DefaultListModel();
                     ListTempTree.setModel(model);
+                    jButton1.setEnabled(true);
                 } else {
                     DefaultListModel model = new DefaultListModel();
                     for (Certification tempC : (List<Certification>) temp.getElements()) {
                         model.addElement(tempC.toString());
                     }
                     ListTempTree.setModel(model);
+                    jButton1.setEnabled(true);
                 }
             } catch (Exception ex) {
                 Logger.getLogger(CurriculumGUI.class.getName()).log(Level.SEVERE, null, ex);
+                jButton1.setEnabled(true);
             }
         }).start();
 
