@@ -1,8 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
+///****************************************************************************/
+///****************************************************************************/
+///****     Copyright (C) 2012                                             ****/
+///****     Antonio Manuel Rodrigues Manso                                 ****/
+///****     e-mail: manso@ipt.pt                                           ****/
+///****     url   : http://orion.ipt.pt/~manso                             ****/
+///****     Instituto Politecnico de Tomar                                 ****/
+///****     Escola Superior de Tecnologia de Tomar                         ****/
+///****************************************************************************/
+///****************************************************************************/
+///****     This software was built with the purpose of investigating      ****/
+///****     and learning. Its use is free and is not provided any          ****/
+///****     guarantee or support.                                          ****/
+///****     If you met bugs, please, report them to the author             ****/
+///****                                                                    ****/
+///****************************************************************************/
+///****************************************************************************/
 package com.mycompany.curriculumdigital;
 
 import java.io.ByteArrayInputStream;
@@ -51,15 +63,34 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class SecurityUtils {
 
+   
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //:::::::::       K E Y S        :::::::::::::::::::::::::::::::::    
     ///////////////////////////////////////////////////////////////////////////
+   /**
+     * Gera uma chave de criptogradia 
+     *
+     * @param keySize tamanho da chave 
+     * @param provider name of provider
+     * @param algorithm nome do algoritmo
+     * @return chave chave simétrica gerada
+     * @throws Exception se algo correr mal
+     */
+    public static Key generateKey(int keySize, String provider, String algorithm) throws Exception {
+        // gerador de chaves
+        KeyGenerator keyGen = KeyGenerator.getInstance(algorithm, provider);
+        //tamanho da chave
+        keyGen.init(keySize);
+        //gerar a chave
+        Key key = keyGen.generateKey();
+        return key;
+    }
     /**
      * Gera uma chave de criptogradia simetrica TrippleDes
      *
      * @param keySize tamanho da chave 128, 192 ou 256 bits
      * @return chave cahve simétrica gerada
-     * @throws Exception muito improvável de ocurrer
+     * @throws Exception se algo correr mal
      */
     public static Key generateAESKey(int keySize) throws Exception {
         return generateAESKey(keySize, "SunJCE");
@@ -71,7 +102,7 @@ public class SecurityUtils {
      * @param keySize tamanho da chave 128, 192 ou 256 bits
      * @param provider name of provider
      * @return chave cahve simétrica gerada
-     * @throws Exception muito improvável de ocurrer
+     * @throws Exception se algo correr mal
      */
     public static Key generateAESKey(int keySize, String provider) throws Exception {
         // gerador de chaves
@@ -82,6 +113,7 @@ public class SecurityUtils {
         Key key = keyGen.generateKey();
         return key;
     }
+    
 
     /**
      * Gera um par de chave para elliptic curves
@@ -111,7 +143,6 @@ public class SecurityUtils {
         }
         // gerador de chaves Eliptic curve
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
-
         // gerador de chaves Eliptic Curves Criptografy
         ECGenParameterSpec generationParam = new ECGenParameterSpec(secCurve);
         keyGen.initialize(generationParam, new SecureRandom());
@@ -218,6 +249,16 @@ public class SecurityUtils {
      */
     public static Key getAESKey(byte[] key) {
         return new SecretKeySpec(key, "AES");
+    }
+
+    /**
+     * Gera uma chave AES
+     *
+     * @param key chave em array de bytes
+     * @return chave chave carregada através da base64
+     */
+    public static Key getKey(byte[] key, String algorithm) {
+        return new SecretKeySpec(key, algorithm);
     }
 
     /**
@@ -470,7 +511,7 @@ public class SecurityUtils {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //:::::::::      I N T E G R I T Y         :::::::::::::::::::::::::::::::::    
     ///////////////////////////////////////////////////////////////////////////
-    public static byte[] calculateHash(byte[] data, String algorithm)
+    public static byte[] getHash(byte[] data, String algorithm)
             throws Exception {
         MessageDigest md = MessageDigest.getInstance(algorithm);
         md.update(data);
@@ -548,7 +589,7 @@ public class SecurityUtils {
         return sign.verify(signature);
     }
 
-        //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //:::::::::::        ZIP /  UNZIP                                :::::::::::
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     /**
@@ -605,4 +646,3 @@ public class SecurityUtils {
     //:::::::::::::::::::::::::::  Copyright(c) M@nso  2022  :::::::::::::::::::
     ///////////////////////////////////////////////////////////////////////////
 }
-

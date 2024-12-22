@@ -5,15 +5,16 @@
 package Interfaces;
 
 import com.mycompany.curriculumdigital.User;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PublicKey;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import p2p.IremoteP2P;
+import java.rmi.Naming;
+import java.security.PrivateKey;
 
 /**
  *
@@ -24,6 +25,10 @@ public class Login extends javax.swing.JFrame {
     /**
      * Creates new form Login
      */
+    IremoteP2P myremoteObject;
+    String instPassword;
+    String userPassword;
+
     public Login() {
         initComponents();
     }
@@ -40,13 +45,21 @@ public class Login extends javax.swing.JFrame {
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtInstLogin = new javax.swing.JTextField();
+        txtUserLogin = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         btLogin = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         ShowPubKey = new javax.swing.JTextArea();
         txtPasswordLogin = new javax.swing.JPasswordField();
         jLabel6 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        txtInstitutionLogin = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLoginInstituicao = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        PasswordInstitutionLogin = new javax.swing.JPasswordField();
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -55,15 +68,20 @@ public class Login extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtRegisterPassword = new javax.swing.JPasswordField();
         txtConfirmPassword = new javax.swing.JPasswordField();
+        jCheckBoxUser = new javax.swing.JCheckBox();
+        jCheckBoxInstituicao = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
+        jAddressServer = new javax.swing.JTextField();
+        jConnectServer = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Nome da instituição");
 
-        txtInstLogin.addActionListener(new java.awt.event.ActionListener() {
+        txtUserLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtInstLoginActionPerformed(evt);
+                txtUserLoginActionPerformed(evt);
             }
         });
 
@@ -90,13 +108,13 @@ public class Login extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(txtInstLogin, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtUserLogin, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                     .addComponent(txtPasswordLogin))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(57, 57, 57)
@@ -111,7 +129,7 @@ public class Login extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtInstLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtUserLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -124,9 +142,73 @@ public class Login extends javax.swing.JFrame {
                 .addGap(24, 24, 24))
         );
 
-        jTabbedPane4.addTab("Login", new javax.swing.ImageIcon(getClass().getResource("/images/permission.png")), jPanel2); // NOI18N
+        jTabbedPane4.addTab("Utilizador", new javax.swing.ImageIcon(getClass().getResource("/images/permission.png")), jPanel2); // NOI18N
 
-        jLabel3.setText("Nome da instituição");
+        txtInstitutionLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtInstitutionLoginActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Nome da instituição");
+
+        jLabel8.setText("Password");
+
+        jLoginInstituicao.setText("Login");
+        jLoginInstituicao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jLoginInstituicaoActionPerformed(evt);
+            }
+        });
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane2.setViewportView(jTextArea1);
+
+        PasswordInstitutionLogin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PasswordInstitutionLoginActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtInstitutionLogin)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel8)
+                    .addComponent(jLoginInstituicao, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                    .addComponent(PasswordInstitutionLogin))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtInstitutionLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel8)
+                        .addGap(17, 17, 17)
+                        .addComponent(PasswordInstitutionLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLoginInstituicao, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2))
+                .addContainerGap(210, Short.MAX_VALUE))
+        );
+
+        jTabbedPane4.addTab("Instituição", new javax.swing.ImageIcon(getClass().getResource("/images/banco.png")), jPanel1); // NOI18N
+
+        jLabel3.setText("Nome ");
 
         jLabel4.setText("Password");
 
@@ -157,21 +239,35 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
+        jCheckBoxUser.setText("Utilizador");
+        jCheckBoxUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxUserActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxInstituicao.setText("Instituição");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel5)
-                    .addComponent(txtInstRegister)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
-                    .addComponent(btRegister, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtRegisterPassword)
-                    .addComponent(txtConfirmPassword))
-                .addContainerGap(548, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel5)
+                        .addComponent(txtInstRegister)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                        .addComponent(btRegister, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtRegisterPassword)
+                        .addComponent(txtConfirmPassword))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jCheckBoxUser, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCheckBoxInstituicao, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(417, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,34 +284,64 @@ public class Login extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtConfirmPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCheckBoxUser)
+                    .addComponent(jCheckBoxInstituicao))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(192, Short.MAX_VALUE))
+                .addContainerGap(147, Short.MAX_VALUE))
         );
 
         jTabbedPane4.addTab("Register", new javax.swing.ImageIcon(getClass().getResource("/images/adicionar-usuario.png")), jPanel3); // NOI18N
+
+        jAddressServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jAddressServerActionPerformed(evt);
+            }
+        });
+
+        jConnectServer.setText("Conectar");
+        jConnectServer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jConnectServerActionPerformed(evt);
+            }
+        });
+
+        jLabel9.setText("Coloque o address do servidor:");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 698, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(164, Short.MAX_VALUE)
+                .addComponent(jConnectServer)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jAddressServer, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(147, 147, 147))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 430, Short.MAX_VALUE)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(59, 59, 59)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jAddressServer, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jConnectServer, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(303, Short.MAX_VALUE))
         );
 
-        jTabbedPane4.addTab("about", jPanel4);
+        jTabbedPane4.addTab("Conectar ao Servidor", jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane4)
-                .addContainerGap())
+            .addComponent(jTabbedPane4)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,86 +351,151 @@ public class Login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoginActionPerformed
-        // TODO add your handling code here:
+
+    private void jLoginInstituicaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLoginInstituicaoActionPerformed
         try {
-            User u = new User(txtInstLogin.getText());
-            u.load(new String(txtPasswordLogin.getPassword()));
-            String pub = Base64.getEncoder().encodeToString(u.getPub().getEncoded());
-            ShowPubKey.setText(pub);
-            new CurriculumGUI(u).setVisible(true);
+            // Verifica se o objeto remoto está conectado
+            if (myremoteObject == null) {
+                JOptionPane.showMessageDialog(this, "Conecte-se ao servidor antes de fazer login.");
+                return;
+            }
+
+            String nome = txtInstitutionLogin.getText();
+            String password = new String(PasswordInstitutionLogin.getPassword());
+
+            boolean loginSuccess = myremoteObject.loginInstituicao(nome, password);
+            if (loginSuccess) {
+                JOptionPane.showMessageDialog(this, "Login bem-sucedido!");
+                instPassword = new String(password);
+                new InstituicaoGUI(new User(nome), instPassword, myremoteObject).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Instituição não existe ou senha incorreta.");
+            }
         } catch (Exception ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Utilizador não existe.");
+            JOptionPane.showMessageDialog(this, "Erro ao tentar fazer login.");
         }
-    }//GEN-LAST:event_btLoginActionPerformed
 
-    private void txtInstLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtInstLoginActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtInstLoginActionPerformed
+    }//GEN-LAST:event_jLoginInstituicaoActionPerformed
 
     private void txtConfirmPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtConfirmPasswordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtConfirmPasswordActionPerformed
 
     private void txtRegisterPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRegisterPasswordActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code heretxtUserLogi
     }//GEN-LAST:event_txtRegisterPasswordActionPerformed
 
     private void btRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRegisterActionPerformed
-    char[] password = txtRegisterPassword.getPassword();
-    char[] confirmPassword = txtConfirmPassword.getPassword();
-    String nome = txtInstRegister.getText();
 
-    // Verifica se as senhas coincidem
-    if (!Arrays.equals(password, confirmPassword)) {
-        JOptionPane.showMessageDialog(this, "As passwords têm que ser iguais");
-        return;  // Sai da função se as senhas não forem iguais
-    }
+        char[] password = txtRegisterPassword.getPassword();
+        char[] confirmPassword = txtConfirmPassword.getPassword();
+        String nome = txtInstRegister.getText();
 
-    // Verifica se o nome já está registado no ficheiro
-    boolean nomeFound = false;
-    try (BufferedReader br = new BufferedReader(new FileReader("ListaNomes.txt"))) {
-        String line;
+        // Verifica se as senhas coincidem
+        if (!Arrays.equals(password, confirmPassword)) {
+            JOptionPane.showMessageDialog(this, "As passwords têm que ser iguais");
+            return;  // Sai da função se as senhas não forem iguais
+        }
 
-        while ((line = br.readLine()) != null) {
-            if (line.equals(nome)) {
-                nomeFound = true;
-                JOptionPane.showMessageDialog(this, "Essa instituição já está registada");
-                return;  // Sai da função se o nome já existir
+        // Verifica se uma das checkboxes está selecionada
+        if (!jCheckBoxUser.isSelected() && !jCheckBoxInstituicao.isSelected()) {
+            JOptionPane.showMessageDialog(this, "Selecione se é um utilizador ou uma instituição");
+            return;  // Sai da função se nenhuma checkbox estiver selecionada
+        }
+
+        try {
+            // Gera o par de chaves
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048);
+            KeyPair pair = keyGen.generateKeyPair();
+            PublicKey publicKey = pair.getPublic();
+            PrivateKey privateKey = pair.getPrivate();
+
+            // Salva a chave privada localmente
+            User user = new User(nome);
+            user.setPriv(privateKey);
+            user.setPub(publicKey);
+            user.generateKeys(); // Gera a chave simétrica
+            user.save(new String(password));
+
+            // Registra o usuário no servidor remoto
+            if (jCheckBoxUser.isSelected()) {
+                myremoteObject.registerUser(nome, publicKey, new String(password));
+                JOptionPane.showMessageDialog(this, "Utilizador criado com sucesso!");
+            } else if (jCheckBoxInstituicao.isSelected()) {
+                myremoteObject.registerInstituicao(nome, publicKey, new String(password));
+                JOptionPane.showMessageDialog(this, "Instituição criada com sucesso!");
             }
+        } catch (Exception ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, ex.getMessage());
         }
-
-    } catch (Exception e) {
-        System.out.println("Erro ao ler o ficheiro: " + e);
-    }
-
-    // Se o nome não foi encontrado, adiciona-o ao ficheiro
-    if (!nomeFound) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("ListaNomes.txt", true))) {
-            writer.println(nome);  // Adiciona o nome no final do ficheiro
-        } catch (Exception e) {
-            System.out.println("Erro ao escrever no ficheiro: " + e);
-        }
-    }
-
-    // Cria o utilizador e salva as informações
-    try {
-        User u = new User(nome);
-        u.generateKeys();
-        u.save(new String(password));
-        u.save(new String(confirmPassword));
-        JOptionPane.showMessageDialog(this, "Utilizador criado com sucesso!");
-    } catch (Exception ex) {
-        Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-        JOptionPane.showMessageDialog(this, ex.getMessage());
-    }
     }//GEN-LAST:event_btRegisterActionPerformed
-
 
     private void txtInstRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtInstRegisterActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtInstRegisterActionPerformed
+
+    private void btLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoginActionPerformed
+        // TODO add your handling code here:
+        try {
+            String nome = txtUserLogin.getText();
+            String password = new String(txtPasswordLogin.getPassword());
+
+            boolean loginSuccess = myremoteObject.loginUtilizador(nome, password);
+            if (loginSuccess) {
+                JOptionPane.showMessageDialog(this, "Login bem-sucedido!");
+                // Carregar a interface do utilizador ou outra ação pós-login
+                userPassword = new String(password);
+                new UtilizadorGUI(new User(nome), userPassword, myremoteObject).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Utilizador não existe ou senha incorreta.");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Erro ao tentar fazer login.");
+        }
+    }//GEN-LAST:event_btLoginActionPerformed
+
+    private void txtUserLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserLoginActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUserLoginActionPerformed
+
+    private void txtInstitutionLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtInstitutionLoginActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtInstitutionLoginActionPerformed
+
+    private void jCheckBoxUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxUserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBoxUserActionPerformed
+
+    private void jAddressServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jAddressServerActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jAddressServerActionPerformed
+
+    private void jConnectServerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jConnectServerActionPerformed
+        try {
+            String address = jAddressServer.getText();
+            System.out.println("Tentando conectar ao endereço: " + address);  // Depuração
+
+            // Substitua "RemoteObject" pelo nome do objeto remoto registrado no servidor
+            myremoteObject = (IremoteP2P) Naming.lookup(address);
+
+            if (myremoteObject != null) {
+                System.out.println("Conectado ao objeto remoto com sucesso!");
+                JOptionPane.showMessageDialog(this, "Conectado ao servidor com sucesso!");
+            }
+        } catch (Exception ex) {
+            System.out.println("Erro ao tentar conectar: " + ex.getMessage());  // Depuração de erro
+            ex.printStackTrace();  // Exibe a stack trace para entender o erro
+            JOptionPane.showMessageDialog(this, "Erro ao tentar conectar: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_jConnectServerActionPerformed
+
+    private void PasswordInstitutionLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasswordInstitutionLoginActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_PasswordInstitutionLoginActionPerformed
 
     /**
      * @param args the command line arguments
@@ -321,27 +512,23 @@ public class Login extends javax.swing.JFrame {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
 
-}
+                }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Login.class  
+            java.util.logging.Logger.getLogger(Login.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Login.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-} catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Login.class  
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Login.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-} catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Login.class  
-
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Login.class  
-
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Login.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -354,24 +541,37 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPasswordField PasswordInstitutionLogin;
     private javax.swing.JTextArea ShowPubKey;
     private javax.swing.JButton btLogin;
     private javax.swing.JButton btRegister;
+    private javax.swing.JTextField jAddressServer;
+    private javax.swing.JCheckBox jCheckBoxInstituicao;
+    private javax.swing.JCheckBox jCheckBoxUser;
+    private javax.swing.JButton jConnectServer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JButton jLoginInstituicao;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane4;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPasswordField txtConfirmPassword;
-    private javax.swing.JTextField txtInstLogin;
     private javax.swing.JTextField txtInstRegister;
+    private javax.swing.JTextField txtInstitutionLogin;
     private javax.swing.JPasswordField txtPasswordLogin;
     private javax.swing.JPasswordField txtRegisterPassword;
+    private javax.swing.JTextField txtUserLogin;
     // End of variables declaration//GEN-END:variables
 }

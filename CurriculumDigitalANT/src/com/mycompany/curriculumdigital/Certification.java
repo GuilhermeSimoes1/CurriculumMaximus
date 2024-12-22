@@ -15,12 +15,12 @@ import static javax.management.Query.value;
  * @author Gui and Rodrigo
  */
 /**
- * A classe Certification representa uma certificação de um evento entre dois utilizadores.
- * Cada certificação contém a informação do remetente e destinatário, as chaves públicas
- * dos utilizadores e uma assinatura digital do evento.
- * A assinatura é gerada pelo utilizador remetente e pode ser verificada para garantir
- * a autenticidade da certificação.
- * Esta classe implementa Serializable, permitindo a serialização de certificações.
+ * A classe Certification representa uma certificação de um evento entre dois
+ * utilizadores. Cada certificação contém a informação do remetente e
+ * destinatário, as chaves públicas dos utilizadores e uma assinatura digital do
+ * evento. A assinatura é gerada pelo utilizador remetente e pode ser verificada
+ * para garantir a autenticidade da certificação. Esta classe implementa
+ * Serializable, permitindo a serialização de certificações.
  */
 public class Certification implements Serializable {
 
@@ -33,8 +33,8 @@ public class Certification implements Serializable {
 
     /**
      * Construtor da classe Certification que inicializa a certificação com as
-     * informações do remetente e destinatário, bem como o evento certificado.
-     * A assinatura digital é gerada automaticamente.
+     * informações do remetente e destinatário, bem como o evento certificado. A
+     * assinatura digital é gerada automaticamente.
      *
      * @param from Utilizador remetente da certificação.
      * @param to Utilizador destinatário da certificação.
@@ -42,16 +42,24 @@ public class Certification implements Serializable {
      * @throws Exception Se ocorrer um erro durante a criação da assinatura.
      */
     public Certification(User from, User to, String evento) throws Exception {
+        if (from.getPub() == null) {
+            throw new NullPointerException("Chave pública do remetente não carregada: " + from.getName());
+        }
+        if (to.getPub() == null) {
+            throw new NullPointerException("Chave pública do destinatário não carregada: " + to.getName());
+        }
         this.from = from.getName();
         this.fromPub = Base64.getEncoder().encodeToString(from.getPub().getEncoded());
         this.to = to.getName();
         this.toPub = Base64.getEncoder().encodeToString(to.getPub().getEncoded());
         this.evento = evento;
         sign(from.getPriv());
+        System.out.println("Certificação criada com sucesso: " + this.toString());
     }
 
     /**
-     * Gera a assinatura digital para o evento usando a chave privada do remetente.
+     * Gera a assinatura digital para o evento usando a chave privada do
+     * remetente.
      *
      * @param priv Chave privada do remetente usada para assinar o evento.
      * @throws Exception Se ocorrer um erro durante o processo de assinatura.
@@ -64,8 +72,8 @@ public class Certification implements Serializable {
     }
 
     /**
-     * Verifica se a assinatura digital da certificação é válida,
-     * garantindo que o conteúdo não foi alterado e que foi assinado corretamente.
+     * Verifica se a assinatura digital da certificação é válida, garantindo que
+     * o conteúdo não foi alterado e que foi assinado corretamente.
      *
      * @return true se a certificação for válida, false caso contrário.
      */

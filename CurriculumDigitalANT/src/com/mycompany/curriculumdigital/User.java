@@ -6,6 +6,7 @@
 package com.mycompany.curriculumdigital;
 
 import java.awt.RenderingHints.Key;
+import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
@@ -13,16 +14,15 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import javax.crypto.SecretKey;
 
-
 /**
  *
  * @author Gui and Rodrigo
  */
-
 /**
- * A classe User representa um utilizador com chaves de criptografia pública, privada e simétrica.
- * Esta classe permite gerar, guardar e carregar chaves de forma segura, com suporte para 
- * encriptação e desencriptação das chaves privadas e simétricas usando uma password.
+ * A classe User representa um utilizador com chaves de criptografia pública,
+ * privada e simétrica. Esta classe permite gerar, guardar e carregar chaves de
+ * forma segura, com suporte para encriptação e desencriptação das chaves
+ * privadas e simétricas usando uma password.
  */
 public class User {
 
@@ -47,9 +47,9 @@ public class User {
     private SecretKey sim;
 
     /**
-     * Construtor da classe User. Inicializa o utilizador com o nome fornecido e define as chaves
-     * pública, privada e simétrica como null.
-     * 
+     * Construtor da classe User. Inicializa o utilizador com o nome fornecido e
+     * define as chaves pública, privada e simétrica como null.
+     *
      * @param nome O nome do utilizador.
      */
     public User(String nome) {
@@ -60,9 +60,9 @@ public class User {
     }
 
     /**
-     * Construtor da classe User. Inicializa o utilizador com o nome "noName" e define as chaves 
-     * pública, privada e simétrica como null.
-     * 
+     * Construtor da classe User. Inicializa o utilizador com o nome "noName" e
+     * define as chaves pública, privada e simétrica como null.
+     *
      * @throws Exception Caso ocorra um erro na inicialização do utilizador.
      */
     public User() throws Exception {
@@ -73,9 +73,9 @@ public class User {
     }
 
     /**
-     * Gera um par de chaves (pública e privada) usando o algoritmo ECC e uma chave simétrica AES,
-     * com tamanho de 256 bits.
-     * 
+     * Gera um par de chaves (pública e privada) usando o algoritmo ECC e uma
+     * chave simétrica AES, com tamanho de 256 bits.
+     *
      * @throws Exception Caso ocorra um erro na geração das chaves.
      */
     public void generateKeys() throws Exception {
@@ -86,53 +86,95 @@ public class User {
     }
 
     /**
-     * Guarda a chave privada e a chave simétrica encriptadas, assim como a chave pública sem 
-     * encriptação, no sistema de ficheiros.
-     * 
-     * @param password A password utilizada para encriptar as chaves privada e simétrica.
+     * Guarda a chave privada e a chave simétrica encriptadas, assim como a
+     * chave pública sem encriptação, no sistema de ficheiros.
+     *
+     * @param password A password utilizada para encriptar as chaves privada e
+     * simétrica.
      * @throws Exception Caso ocorra um erro ao guardar as chaves.
      */
     public void save(String password) throws Exception {
         // Encriptar a chave privada
         byte[] secret = SecurityUtils.encrypt(priv.getEncoded(), password);
-        Files.write(Path.of(this.nome + ".priv"), secret);
+        Path privPath = Path.of(this.nome + ".priv");
+        Files.write(privPath, secret);
+        System.out.println("Chave privada salva em: " + privPath.toString());
+
         // Encriptar a chave simétrica
         byte[] simData = SecurityUtils.encrypt(sim.getEncoded(), password);
-        Files.write(Path.of(this.nome + ".sim"), simData);
+        Path simPath = Path.of(this.nome + ".sim");
+        Files.write(simPath, simData);
+        System.out.println("Chave simétrica salva em: " + simPath.toString());
+
         // Guardar a chave pública
-        Files.write(Path.of(this.nome + ".pub"), pub.getEncoded());
+        Path pubPath = Path.of(this.nome + ".pub");
+        Files.write(pubPath, pub.getEncoded());
+        System.out.println("Chave pública salva em: " + pubPath.toString());
     }
 
     /**
-     * Carrega e desencripta a chave privada e a chave simétrica a partir de ficheiros, usando a 
-     * password fornecida, e carrega a chave pública sem encriptação.
-     * 
+     * Carrega e desencripta a chave privada e a chave simétrica a partir de
+     * ficheiros, usando a password fornecida, e carrega a chave pública sem
+     * encriptação.
+     *
      * @param password A password utilizada para desencriptar as chaves.
-     * @throws Exception Caso ocorra um erro ao carregar ou desencriptar as chaves.
+     * @throws Exception Caso ocorra um erro ao carregar ou desencriptar as
+     * chaves.
      */
-    public void load(String password) throws Exception {
+public void load(String password) throws Exception {
+    try {
         // Desencriptar a chave privada
-        byte[] privData = Files.readAllBytes(Path.of(this.nome + ".priv"));
-        privData = SecurityUtils.decrypt(privData, password);
+        Path privPath = Path.of(this.nome + ".priv");
+        if (Files.exists(privPath)) {
+            byte[] privData = Files.readAllBytes(privPath);
+            privData = SecurityUtils.decrypt(privData, password);
+            this.priv = SecurityUtils.getPrivateKey(privData);
+            System.out.println("Chave privada carregada para o usuário: " + this.nome);
+        } else {
+            throw new FileNotFoundException("Chave privada não encontrada para o usuário: " + this.nome);
+        }
+
         // Desencriptar a chave simétrica
-        byte[] simData = Files.readAllBytes(Path.of(this.nome + ".sim"));
-        simData = SecurityUtils.decrypt(simData, password);
+        Path simPath = Path.of(this.nome + ".sim");
+        if (Files.exists(simPath)) {
+            byte[] simData = Files.readAllBytes(simPath);
+            simData = SecurityUtils.decrypt(simData, password);
+            this.sim = (SecretKey) SecurityUtils.getAESKey(simData);
+            System.out.println("Chave simétrica carregada para o usuário: " + this.nome);
+        } else {
+            throw new FileNotFoundException("Chave simétrica não encontrada para o usuário: " + this.nome);
+        }
+
         // Carregar a chave pública
-        byte[] pubData = Files.readAllBytes(Path.of(this.nome + ".pub"));
-        this.priv = SecurityUtils.getPrivateKey(privData);
-        this.pub = SecurityUtils.getPublicKey(pubData);
-        this.sim = (SecretKey) SecurityUtils.getAESKey(simData);
+        Path pubPath = Path.of(this.nome + ".pub");
+        if (Files.exists(pubPath)) {
+            byte[] pubData = Files.readAllBytes(pubPath);
+            this.pub = SecurityUtils.getPublicKey(pubData);
+            System.out.println("Chave pública carregada para o usuário: " + this.nome);
+        } else {
+            throw new FileNotFoundException("Chave pública não encontrada para o usuário: " + this.nome);
+        }
+    } catch (Exception e) {
+        throw new Exception("Erro ao carregar usuário: " + e.getMessage());
     }
+}
 
     /**
-     * Carrega a chave pública do utilizador a partir de um ficheiro, sem encriptação.
-     * 
+     * Carrega a chave pública do utilizador a partir de um ficheiro, sem
+     * encriptação.
+     *
      * @throws Exception Caso ocorra um erro ao carregar a chave pública.
      */
     public void loadPublic() throws Exception {
         try {
-            byte[] pubData = Files.readAllBytes(Path.of(this.nome + ".pub"));
-            this.pub = SecurityUtils.getPublicKey(pubData);
+            Path pubPath = Path.of(this.nome + ".pub");
+            if (Files.exists(pubPath)) {
+                byte[] pubData = Files.readAllBytes(pubPath);
+                this.pub = SecurityUtils.getPublicKey(pubData);
+                System.out.println("Chave pública carregada para o usuário: " + this.nome);
+            } else {
+                throw new FileNotFoundException("Chave pública não encontrada para o usuário: " + this.nome);
+            }
         } catch (Exception e) {
             throw new Exception("Erro ao carregar usuário: " + e.getMessage());
         }
@@ -140,7 +182,7 @@ public class User {
 
     /**
      * Retorna o nome do utilizador.
-     * 
+     *
      * @return O nome do utilizador.
      */
     public String getName() {
@@ -149,7 +191,7 @@ public class User {
 
     /**
      * Define o nome do utilizador.
-     * 
+     *
      * @param nome O novo nome do utilizador.
      */
     public void setName(String nome) {
@@ -158,7 +200,7 @@ public class User {
 
     /**
      * Retorna a chave pública do utilizador.
-     * 
+     *
      * @return A chave pública.
      */
     public PublicKey getPub() {
@@ -167,7 +209,7 @@ public class User {
 
     /**
      * Define a chave pública do utilizador.
-     * 
+     *
      * @param pub A nova chave pública.
      */
     public void setPub(PublicKey pub) {
@@ -176,7 +218,7 @@ public class User {
 
     /**
      * Retorna a chave privada do utilizador.
-     * 
+     *
      * @return A chave privada.
      */
     public PrivateKey getPriv() {
@@ -185,7 +227,7 @@ public class User {
 
     /**
      * Define a chave privada do utilizador.
-     * 
+     *
      * @param priv A nova chave privada.
      */
     public void setPriv(PrivateKey priv) {
@@ -194,7 +236,7 @@ public class User {
 
     /**
      * Retorna a chave simétrica do utilizador.
-     * 
+     *
      * @return A chave simétrica.
      */
     public SecretKey getSim() {
@@ -203,7 +245,7 @@ public class User {
 
     /**
      * Define a chave simétrica do utilizador.
-     * 
+     *
      * @param sim A nova chave simétrica.
      */
     public void setSim(SecretKey sim) {
