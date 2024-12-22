@@ -58,7 +58,7 @@
                           <Component id="txtUserLogin" alignment="0" max="32767" attributes="0"/>
                           <Component id="jLabel2" alignment="0" min="-2" pref="73" max="-2" attributes="0"/>
                           <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="btLogin" pref="202" max="32767" attributes="0"/>
+                          <Component id="jLoginUser" pref="202" max="32767" attributes="0"/>
                           <Component id="txtPasswordLogin" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -86,7 +86,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="txtPasswordLogin" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                              <Component id="btLogin" min="-2" pref="33" max="-2" attributes="0"/>
+                              <Component id="jLoginUser" min="-2" pref="33" max="-2" attributes="0"/>
                           </Group>
                           <Component id="jScrollPane1" max="32767" attributes="0"/>
                       </Group>
@@ -113,12 +113,12 @@
                 <Property name="text" type="java.lang.String" value="Password"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btLogin">
+            <Component class="javax.swing.JButton" name="jLoginUser">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Login"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btLoginActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jLoginUserActionPerformed"/>
               </Events>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane1">

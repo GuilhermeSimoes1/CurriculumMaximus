@@ -46,6 +46,8 @@ public interface IremoteP2P extends Remote {
 
     public List<String> getTransactions() throws RemoteException;
     
+    List<String> getUserTransactions(String userName) throws RemoteException;
+    
     public void removeTransactions(List<String> transactions) throws RemoteException;
 
     public void synchronizeTransactions(IremoteP2P node) throws RemoteException;

@@ -47,7 +47,7 @@ public class Login extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         txtUserLogin = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        btLogin = new javax.swing.JButton();
+        jLoginUser = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         ShowPubKey = new javax.swing.JTextArea();
         txtPasswordLogin = new javax.swing.JPasswordField();
@@ -87,10 +87,10 @@ public class Login extends javax.swing.JFrame {
 
         jLabel2.setText("Password");
 
-        btLogin.setText("Login");
-        btLogin.addActionListener(new java.awt.event.ActionListener() {
+        jLoginUser.setText("Login");
+        jLoginUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btLoginActionPerformed(evt);
+                jLoginUserActionPerformed(evt);
             }
         });
 
@@ -111,7 +111,7 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(txtUserLogin, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btLogin, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                    .addComponent(jLoginUser, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                     .addComponent(txtPasswordLogin))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1)
@@ -135,7 +135,7 @@ public class Login extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtPasswordLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
-                        .addComponent(btLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLoginUser, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 207, Short.MAX_VALUE)
                 .addComponent(jLabel6)
@@ -437,7 +437,7 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtInstRegisterActionPerformed
 
-    private void btLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btLoginActionPerformed
+    private void jLoginUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLoginUserActionPerformed
         // TODO add your handling code here:
         try {
             String nome = txtUserLogin.getText();
@@ -456,7 +456,7 @@ public class Login extends javax.swing.JFrame {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, "Erro ao tentar fazer login.");
         }
-    }//GEN-LAST:event_btLoginActionPerformed
+    }//GEN-LAST:event_jLoginUserActionPerformed
 
     private void txtUserLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUserLoginActionPerformed
         // TODO add your handling code here:
@@ -543,7 +543,6 @@ public class Login extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField PasswordInstitutionLogin;
     private javax.swing.JTextArea ShowPubKey;
-    private javax.swing.JButton btLogin;
     private javax.swing.JButton btRegister;
     private javax.swing.JTextField jAddressServer;
     private javax.swing.JCheckBox jCheckBoxInstituicao;
@@ -559,6 +558,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JButton jLoginInstituicao;
+    private javax.swing.JButton jLoginUser;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

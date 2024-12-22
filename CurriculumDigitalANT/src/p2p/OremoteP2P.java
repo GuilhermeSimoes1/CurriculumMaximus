@@ -183,6 +183,22 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
     }
 
     @Override
+    public List<String> getUserTransactions(String userName) throws RemoteException {
+        List<String> userTransactions = new ArrayList<>();
+
+        // Buscar transações na blockchain
+        for (Block block : myBlockchain.getChain()) {
+            for (String transaction : block.transactions()) {
+                if (transaction.contains(userName)) {
+                    userTransactions.add(transaction);
+                }
+            }
+        }
+
+        return userTransactions;
+    }
+
+    @Override
     public void synchronizeTransactions(IremoteP2P node) throws RemoteException {
         //tamanho anterior
         int oldsize = transactions.size();

@@ -6,9 +6,13 @@ package Interfaces;
 
 import com.mycompany.curriculumdigital.Certification;
 import com.mycompany.curriculumdigital.User;
+import java.rmi.RemoteException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import p2p.IremoteP2P;
 
 /**
@@ -35,7 +39,6 @@ public class UtilizadorGUI extends javax.swing.JFrame {
         this.instPassword = userPassword;
         this.myremoteObject = remoteObject;
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -189,7 +192,25 @@ public class UtilizadorGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jVisualizarCurriculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jVisualizarCurriculoActionPerformed
-      
+        new Thread(() -> {
+            String utilizador = txtNome.getText(); // Pega o nome do utilizador a partir do campo de texto
+            try {
+                // Obtém a lista de transações do utilizador
+                List<String> lista = myremoteObject.getUserTransactions(utilizador);
+
+                // Atualiza o JList no Event Dispatch Thread
+                SwingUtilities.invokeLater(() -> {
+                    // Configura o modelo do JList com a lista de transações
+                    DefaultListModel<String> listModel = new DefaultListModel<>();
+                    for (String item : lista) {
+                        listModel.addElement(item); // Adiciona cada transação ao modelo
+                    }
+                    jCurriculo.setModel(listModel); // Define o modelo no JList
+                });
+            } catch (RemoteException ex) {
+                Logger.getLogger(UtilizadorGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }).start();
     }//GEN-LAST:event_jVisualizarCurriculoActionPerformed
 
     private void jCurriculoAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jCurriculoAncestorAdded
@@ -232,7 +253,6 @@ public class UtilizadorGUI extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

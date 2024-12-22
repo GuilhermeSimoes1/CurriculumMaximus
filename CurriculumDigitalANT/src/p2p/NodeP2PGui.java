@@ -127,8 +127,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         txtBlockTransactions = new javax.swing.JTextArea();
         jScrollPane8 = new javax.swing.JScrollPane();
         lstBlcockchain = new javax.swing.JList<>();
-        pnAbout = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jPanel15 = new javax.swing.JPanel();
         txtExceptionLog = new javax.swing.JLabel();
         txtTimeLog = new javax.swing.JLabel();
@@ -245,8 +243,12 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         });
         jPanel6.add(btAddTransaction, java.awt.BorderLayout.EAST);
 
-        txtTranaction.setText("transaction to network");
         txtTranaction.setBorder(javax.swing.BorderFactory.createTitledBorder("Transaction"));
+        txtTranaction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTranactionActionPerformed(evt);
+            }
+        });
         jPanel6.add(txtTranaction, java.awt.BorderLayout.CENTER);
 
         pnTransaction.add(jPanel6, java.awt.BorderLayout.PAGE_START);
@@ -256,7 +258,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         txtListTransdactions.setEditable(false);
         txtListTransdactions.setColumns(20);
         txtListTransdactions.setRows(5);
-        txtListTransdactions.setText("transaction");
         txtListTransdactions.setBorder(javax.swing.BorderFactory.createTitledBorder("List of Transactions"));
         jScrollPane3.setViewportView(txtListTransdactions);
 
@@ -363,26 +364,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
 
         tpMain.addTab("Blockchain", new javax.swing.ImageIcon(getClass().getResource("/multimedia/blockchain_32.png")), pnBlockchain); // NOI18N
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/multimedia/manso.png"))); // NOI18N
-        jLabel1.setText("(c) Antóni0 M@nso 2024");
-
-        javax.swing.GroupLayout pnAboutLayout = new javax.swing.GroupLayout(pnAbout);
-        pnAbout.setLayout(pnAboutLayout);
-        pnAboutLayout.setHorizontalGroup(
-            pnAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnAboutLayout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(0, 295, Short.MAX_VALUE))
-        );
-        pnAboutLayout.setVerticalGroup(
-            pnAboutLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnAboutLayout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addGap(0, 265, Short.MAX_VALUE))
-        );
-
-        tpMain.addTab("About", new javax.swing.ImageIcon(getClass().getResource("/multimedia/about.png")), pnAbout); // NOI18N
-
         getContentPane().add(tpMain, java.awt.BorderLayout.PAGE_START);
 
         jPanel15.setLayout(new java.awt.BorderLayout());
@@ -454,12 +435,7 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     }//GEN-LAST:event_btMiningActionPerformed
 
     private void btAddTransactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddTransactionActionPerformed
-        try {
-            myremoteObject.addTransaction(txtTranaction.getText());
-        } catch (RemoteException ex) {
-            onException(ex, "transactions");
-            Logger.getLogger(NodeP2PGui.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
     }//GEN-LAST:event_btAddTransactionActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -498,6 +474,10 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
             Logger.getLogger(NodeP2PGui.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btStartServerActionPerformed
+
+    private void txtTranactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTranactionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTranactionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -667,7 +647,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     private javax.swing.JButton btStartServer;
     private javax.swing.JLabel imgServerRunning;
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -692,7 +671,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     private javax.swing.JLabel lblMining;
     private javax.swing.JLabel lblWinner;
     private javax.swing.JList<String> lstBlcockchain;
-    private javax.swing.JPanel pnAbout;
     private javax.swing.JPanel pnBlockchain;
     private javax.swing.JPanel pnNetwork;
     private javax.swing.JPanel pnServer;
