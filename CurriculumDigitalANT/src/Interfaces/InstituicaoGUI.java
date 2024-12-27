@@ -4,8 +4,8 @@
  */
 package Interfaces;
 
-import com.mycompany.curriculumdigital.Certification;
-import com.mycompany.curriculumdigital.User;
+import curriculumMaximus.core.Certification;
+import curriculumMaximus.core.User;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;

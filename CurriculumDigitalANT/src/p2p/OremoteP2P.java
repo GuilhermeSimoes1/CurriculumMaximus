@@ -15,16 +15,16 @@
 //////////////////////////////////////////////////////////////////////////////
 package p2p;
 
-import com.mycompany.curriculumdigital.Block;
-import com.mycompany.curriculumdigital.BlockChain;
-import com.mycompany.curriculumdigital.Certification;
+import blockchain.utils.Block;
+import blockchain.utils.BlockChain;
+import curriculumMaximus.core.Certification;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
-import com.mycompany.curriculumdigital.Miner;
+import blockchain.utils.Miner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -46,6 +46,7 @@ import utils.RMI;
 public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
 
     final static String BLOCHAIN_FILENAME = "blockchain.obj";
+    private static final String PENDING_TRANSACTIONS_FILE = "pendingTransactions.obj";
     private static final String USERS_FILE = "users.dat";
     private static final String INSTITUTIONS_FILE = "institutions.dat";
     private static final String PUBLIC_KEYS_FILE = "publicKeys.dat";
@@ -74,6 +75,7 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
 
         try {
             loadData();
+            loadPendingTransactions();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -96,6 +98,21 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
             utilizadores = new HashMap<>();
             instituicoes = new HashMap<>();
             publicKeys = new HashMap<>();
+        }
+    }
+
+    private void loadPendingTransactions() throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PENDING_TRANSACTIONS_FILE))) {
+            transactions.addAll((CopyOnWriteArraySet<String>) ois.readObject());
+        } catch (FileNotFoundException e) {
+            // Se o ficheiro não existir, inicialize o conjunto vazio
+            transactions = new CopyOnWriteArraySet<>();
+        }
+    }
+
+    private void savePendingTransactions() throws IOException {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PENDING_TRANSACTIONS_FILE))) {
+            oos.writeObject(transactions);
         }
     }
 
@@ -165,6 +182,7 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         return transactions.size();
     }
 
+    @Override
     public void addTransaction(Certification certification) throws RemoteException {
         String data = certification.toString();
         if (transactions.contains(data)) {
@@ -172,6 +190,11 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
             return;
         }
         transactions.add(data);
+        try {
+            savePendingTransactions();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         for (IremoteP2P node : network) {
             node.addTransaction(certification);
         }
@@ -228,18 +251,18 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
 
     @Override
     public void removeTransactions(List<String> myTransactions) throws RemoteException {
-        //remover as transações da lista atural
         transactions.removeAll(myTransactions);
-        p2pListener.onTransaction("remove " + myTransactions.size() + "transactions");
-        //propagar as remoções
+        try {
+            savePendingTransactions();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        p2pListener.onTransaction("remove " + myTransactions.size() + " transactions");
         for (IremoteP2P iremoteP2P : network) {
-            //se houver algum elemento em comum nas transações remotas
             if (iremoteP2P.getTransactions().retainAll(transactions)) {
-                //remover as transaçoies
                 iremoteP2P.removeTransactions(myTransactions);
             }
         }
-
     }
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //:::::::::::::::::      M I N E R   :::::::::::::::::::::::::::::::::::::::

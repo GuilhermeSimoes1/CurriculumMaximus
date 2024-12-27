@@ -4,8 +4,8 @@
  */
 package Interfaces;
 
-import com.mycompany.curriculumdigital.Certification;
-import com.mycompany.curriculumdigital.User;
+import curriculumMaximus.core.Certification;
+import curriculumMaximus.core.User;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.logging.Level;

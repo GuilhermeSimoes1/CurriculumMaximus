@@ -4,7 +4,7 @@
  */
 package Interfaces;
 
-import com.mycompany.curriculumdigital.User;
+import curriculumMaximus.core.User;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PublicKey;
@@ -387,7 +387,6 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_txtRegisterPasswordActionPerformed
 
     private void btRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRegisterActionPerformed
-
         char[] password = txtRegisterPassword.getPassword();
         char[] confirmPassword = txtConfirmPassword.getPassword();
         String nome = txtInstRegister.getText();
@@ -395,41 +394,38 @@ public class Login extends javax.swing.JFrame {
         // Verifica se as senhas coincidem
         if (!Arrays.equals(password, confirmPassword)) {
             JOptionPane.showMessageDialog(this, "As passwords têm que ser iguais");
-            return;  // Sai da função se as senhas não forem iguais
+            return;
         }
 
         // Verifica se uma das checkboxes está selecionada
         if (!jCheckBoxUser.isSelected() && !jCheckBoxInstituicao.isSelected()) {
             JOptionPane.showMessageDialog(this, "Selecione se é um utilizador ou uma instituição");
-            return;  // Sai da função se nenhuma checkbox estiver selecionada
+            return;
         }
 
         try {
-            // Gera o par de chaves
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-            keyGen.initialize(2048);
-            KeyPair pair = keyGen.generateKeyPair();
-            PublicKey publicKey = pair.getPublic();
-            PrivateKey privateKey = pair.getPrivate();
-
-            // Salva a chave privada localmente
+            // Cria o usuário e gera as chaves
             User user = new User(nome);
-            user.setPriv(privateKey);
-            user.setPub(publicKey);
-            user.generateKeys(); // Gera a chave simétrica
+            user.generateKeys();
+
+            // Salva as chaves localmente, encriptadas com a senha
             user.save(new String(password));
 
             // Registra o usuário no servidor remoto
             if (jCheckBoxUser.isSelected()) {
-                myremoteObject.registerUser(nome, publicKey, new String(password));
+                myremoteObject.registerUser(nome, user.getPub(), new String(password));
                 JOptionPane.showMessageDialog(this, "Utilizador criado com sucesso!");
             } else if (jCheckBoxInstituicao.isSelected()) {
-                myremoteObject.registerInstituicao(nome, publicKey, new String(password));
+                myremoteObject.registerInstituicao(nome, user.getPub(), new String(password));
                 JOptionPane.showMessageDialog(this, "Instituição criada com sucesso!");
             }
         } catch (Exception ex) {
             Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+            JOptionPane.showMessageDialog(this, "Erro ao registrar: " + ex.getMessage());
+        } finally {
+            // Limpar senhas da memória
+            Arrays.fill(password, '\0');
+            Arrays.fill(confirmPassword, '\0');
         }
     }//GEN-LAST:event_btRegisterActionPerformed
 

@@ -4,7 +4,7 @@
  */
 package Interfaces;
 
-import com.mycompany.curriculumdigital.MerkleTree;
+import blockchain.utils.MerkleTree;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;

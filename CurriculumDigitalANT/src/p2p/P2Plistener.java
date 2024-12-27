@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////////
 package p2p;
 
-import com.mycompany.curriculumdigital.BlockChain;
+import blockchain.utils.BlockChain;
 
 /**
  * Created on 27/11/2024, 19:46:43

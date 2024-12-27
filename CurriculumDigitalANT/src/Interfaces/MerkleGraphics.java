@@ -18,7 +18,7 @@ package Interfaces;
 
 
 
-import com.mycompany.curriculumdigital.MerkleTree;
+import blockchain.utils.MerkleTree;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

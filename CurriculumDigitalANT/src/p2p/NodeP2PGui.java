@@ -15,8 +15,8 @@
 //////////////////////////////////////////////////////////////////////////////
 package p2p;
 
-import com.mycompany.curriculumdigital.Block;
-import com.mycompany.curriculumdigital.BlockChain;
+import blockchain.utils.Block;
+import blockchain.utils.BlockChain;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.net.InetAddress;
@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
-import com.mycompany.curriculumdigital.Miner;
+import blockchain.utils.Miner;
 import utils.GuiUtils;
 import utils.RMI;
 
