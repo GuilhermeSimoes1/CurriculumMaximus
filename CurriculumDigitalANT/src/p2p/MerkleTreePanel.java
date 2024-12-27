@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package Interfaces;
+package p2p;
 
 import blockchain.utils.MerkleTree;
 import java.awt.Color;
@@ -98,7 +98,7 @@ public class MerkleTreePanel extends javax.swing.JPanel {
         jPanel4 = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel5 = new javax.swing.JPanel();
-        merklePanel = new Interfaces.MerkleGraphics();
+        merklePanel = new p2p.MerkleGraphics();
         jScrollPane2 = new javax.swing.JScrollPane();
         txt = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
@@ -349,7 +349,7 @@ public class MerkleTreePanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JList<String> lst;
-    private Interfaces.MerkleGraphics merklePanel;
+    private p2p.MerkleGraphics merklePanel;
     private javax.swing.JTextArea txt;
     private javax.swing.JTextField txtElem;
     private javax.swing.JTextField txtProof;

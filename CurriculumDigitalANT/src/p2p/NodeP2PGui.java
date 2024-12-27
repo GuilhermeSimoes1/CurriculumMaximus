@@ -17,6 +17,7 @@ package p2p;
 
 import blockchain.utils.Block;
 import blockchain.utils.BlockChain;
+import blockchain.utils.MerkleTree;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.net.InetAddress;
@@ -42,7 +43,6 @@ import utils.RMI;
 public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
 
     OremoteP2P myremoteObject;
-    
 
     public NodeP2PGui(int port) {
         this();
@@ -70,8 +70,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
             txtAddress.setText("Localhost");
         }
     }
-
-  
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -127,6 +125,8 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         txtBlockTransactions = new javax.swing.JTextArea();
         jScrollPane8 = new javax.swing.JScrollPane();
         lstBlcockchain = new javax.swing.JList<>();
+        jPanel9 = new javax.swing.JPanel();
+        merkleGraphics1 = new p2p.MerkleGraphics();
         jPanel15 = new javax.swing.JPanel();
         txtExceptionLog = new javax.swing.JLabel();
         txtTimeLog = new javax.swing.JLabel();
@@ -364,6 +364,32 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
 
         tpMain.addTab("Blockchain", new javax.swing.ImageIcon(getClass().getResource("/multimedia/blockchain_32.png")), pnBlockchain); // NOI18N
 
+        javax.swing.GroupLayout merkleGraphics1Layout = new javax.swing.GroupLayout(merkleGraphics1);
+        merkleGraphics1.setLayout(merkleGraphics1Layout);
+        merkleGraphics1Layout.setHorizontalGroup(
+            merkleGraphics1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 601, Short.MAX_VALUE)
+        );
+        merkleGraphics1Layout.setVerticalGroup(
+            merkleGraphics1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 308, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(merkleGraphics1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(merkleGraphics1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        tpMain.addTab("MerkleTree", new javax.swing.ImageIcon(getClass().getResource("/images/phylogenetics_1855061 (1).png")), jPanel9); // NOI18N
+
         getContentPane().add(tpMain, java.awt.BorderLayout.PAGE_START);
 
         jPanel15.setLayout(new java.awt.BorderLayout());
@@ -389,18 +415,26 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void lstBlcockchainValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstBlcockchainValueChanged
+
         try {
             BlockChain bc = myremoteObject.getBlockchain();
             int index = bc.getSize() - lstBlcockchain.getSelectedIndex() - 1;
-            if (index < 0 || index >= bc.getSize() ) {
+            if (index < 0 || index >= bc.getSize()) {
                 return;
             }
 
             Block selected = bc.get(index);
+
+            // Atualize os detalhes do bloco
             txtBlockHeader.setText(selected.getHeaderString());
             txtBlockHeader.setCaretPosition(0);
             txtBlockTransactions.setText(selected.getTransactionsString());
             txtBlockTransactions.setCaretPosition(0);
+
+            // Exiba a Merkle Tree
+            MerkleTree tree = new MerkleTree(selected.transactions());
+            merkleGraphics1.setMerkle(tree);
+            merkleGraphics1.repaint();
 
         } catch (RemoteException ex) {
             onException(ex, "list selection");
@@ -661,6 +695,7 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -671,6 +706,7 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     private javax.swing.JLabel lblMining;
     private javax.swing.JLabel lblWinner;
     private javax.swing.JList<String> lstBlcockchain;
+    private p2p.MerkleGraphics merkleGraphics1;
     private javax.swing.JPanel pnBlockchain;
     private javax.swing.JPanel pnNetwork;
     private javax.swing.JPanel pnServer;
@@ -736,19 +772,21 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
 
     @Override
     public void onTransaction(String transaction) {
-        try {
-            onMessage("Transaction ", transaction);
-            String txt = "";
-            List<String> tr = myremoteObject.getTransactions();
-            for (String string : tr) {
-                txt += string + "\n";
+        SwingUtilities.invokeLater(() -> {
+            try {
+                onMessage("Transaction ", transaction);
+                String txt = "";
+                List<String> tr = myremoteObject.getTransactions();
+                for (String string : tr) {
+                    txt += string + "\n";
+                }
+                txtListTransdactions.setText(txt);
+                tpMain.setSelectedComponent(pnTransaction);
+            } catch (RemoteException ex) {
+                onException(ex, "on transaction");
+                Logger.getLogger(NodeP2PGui.class.getName()).log(Level.SEVERE, null, ex);
             }
-            txtListTransdactions.setText(txt);
-            tpMain.setSelectedComponent(pnTransaction);
-        } catch (RemoteException ex) {
-            onException(ex, "on transaction");
-            Logger.getLogger(NodeP2PGui.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        });
     }
 
     @Override
@@ -810,4 +848,5 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
             repaint();
         });
     }
+
 }
