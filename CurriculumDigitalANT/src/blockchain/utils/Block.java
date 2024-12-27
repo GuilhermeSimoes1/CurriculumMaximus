@@ -19,6 +19,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import blockchain.utils.Miner;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
 
 /**
  * Created on 22/08/2022, 09:23:49
@@ -36,12 +39,16 @@ public class Block implements Serializable, Comparable<Block> {
     List<String> transactions; // transações do bloco (devem ser guardadas em separado)
     int nonce;           // proof of work 
     String currentHash;  // Hash of block
+    String timestamp;
 
     public Block(String previousHash, List<String> transactions) {
         this.previousHash = previousHash;
         this.transactions = transactions;
         MerkleTree mkt = new MerkleTree(transactions);
         this.merkleRoot = mkt.getRoot();
+        
+        //define o timestamp como o horário atual em UTC
+        this.timestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now());
     }
 
     public void setNonce(int nonce, int zeros) throws Exception {
@@ -54,6 +61,10 @@ public class Block implements Serializable, Comparable<Block> {
             throw new Exception(nonce + " not valid Hash=" + currentHash);
         }
         
+    }
+    
+    public String getTimestamp() {
+        return timestamp;
     }
 
     public String getMinerData() {
@@ -86,10 +97,10 @@ public class Block implements Serializable, Comparable<Block> {
 
     @Override
     public String toString() {
-        return // (isValid() ? "OK\t" : "ERROR\t")+
-                String.format("[ %8s", previousHash) + " <- "
-                + String.format("%-10s", merkleRoot) + String.format(" %7d ] = ", nonce)
-                + String.format("%8s", currentHash);
+        return String.format(
+        "[prevHash: %s, merkleRoot: %s, nonce: %d, currHash: %s, timestamp: %s]",
+        previousHash, merkleRoot, nonce, currentHash, timestamp
+    );
 
     }
 
@@ -108,7 +119,7 @@ public class Block implements Serializable, Comparable<Block> {
     }
 
     public boolean isValid() {
-        return currentHash.equals(calculateHash());
+        return currentHash.equals(calculateHash()) && timestamp != null && !timestamp.isEmpty();
     }
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

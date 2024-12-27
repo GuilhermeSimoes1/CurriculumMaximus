@@ -426,7 +426,7 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
             Block selected = bc.get(index);
 
             // Atualize os detalhes do bloco
-            txtBlockHeader.setText(selected.getHeaderString());
+            txtBlockHeader.setText(selected.getHeaderString() + "\nTimestamp: " + selected.getTimestamp());
             txtBlockHeader.setCaretPosition(0);
             txtBlockTransactions.setText(selected.getTransactionsString());
             txtBlockTransactions.setCaretPosition(0);
@@ -468,10 +468,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         }).start();
     }//GEN-LAST:event_btMiningActionPerformed
 
-    private void btAddTransactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddTransactionActionPerformed
-
-    }//GEN-LAST:event_btAddTransactionActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         try {
             String address = txtNodeAddress.getText();
@@ -512,6 +508,10 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     private void txtTranactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTranactionActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTranactionActionPerformed
+
+    private void btAddTransactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddTransactionActionPerformed
+
+    }//GEN-LAST:event_btAddTransactionActionPerformed
 
     /**
      * @param args the command line arguments

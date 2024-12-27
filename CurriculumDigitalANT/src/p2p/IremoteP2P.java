@@ -48,6 +48,8 @@ public interface IremoteP2P extends Remote {
     
     List<String> getUserTransactions(String userName) throws RemoteException;
     
+    List<String> getUserTransactionsInstitution(String userName, String instName) throws RemoteException;
+    
     public void removeTransactions(List<String> transactions) throws RemoteException;
 
     public void synchronizeTransactions(IremoteP2P node) throws RemoteException;
