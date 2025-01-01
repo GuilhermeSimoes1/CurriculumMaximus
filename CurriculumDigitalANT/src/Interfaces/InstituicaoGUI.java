@@ -6,13 +6,19 @@ package Interfaces;
 
 import curriculumMaximus.core.Certification;
 import curriculumMaximus.core.User;
+import java.awt.Color;
+import java.awt.Font;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import p2p.IremoteP2P;
 
 /**
@@ -63,8 +69,6 @@ public class InstituicaoGUI extends javax.swing.JFrame {
         textFrom = new javax.swing.JTextField();
         txtTo = new javax.swing.JTextField();
         txtEvento = new javax.swing.JTextField();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        listTransactions = new javax.swing.JList<>();
         jPanel3 = new javax.swing.JPanel();
         txtViewCurriculum = new javax.swing.JTextField();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -107,53 +111,37 @@ public class InstituicaoGUI extends javax.swing.JFrame {
 
         txtEvento.setBorder(javax.swing.BorderFactory.createTitledBorder("Evento"));
 
-        listTransactions.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        listTransactions.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                listTransactionsValueChanged(evt);
-            }
-        });
-        jScrollPane7.setViewportView(listTransactions);
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(textFrom)
-                            .addComponent(txtEvento, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jAdicionarEvento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                            .addComponent(txtTo, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
-                        .addGap(151, 151, 151))))
+                .addGap(190, 190, 190)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jAdicionarEvento, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                    .addComponent(txtTo)
+                    .addComponent(textFrom)
+                    .addComponent(txtEvento))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(31, 31, 31)
+                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 644, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(45, 45, 45)
-                        .addComponent(textFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtEvento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(31, 31, 31)
-                        .addComponent(jAdicionarEvento))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(433, Short.MAX_VALUE))
+                .addGap(29, 29, 29)
+                .addComponent(textFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(txtTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(txtEvento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jAdicionarEvento)
+                .addContainerGap(136, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Adicionar certificação", new javax.swing.ImageIcon(getClass().getResource("/images/arquivo.png")), jPanel2); // NOI18N
@@ -192,28 +180,29 @@ public class InstituicaoGUI extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jListCurriculum)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtViewCurriculum, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(51, 51, 51)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
+                    .addComponent(txtViewCurriculum, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                    .addComponent(jListCurriculum, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(70, 70, 70)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
+                        .addGap(98, 98, 98)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtViewCurriculum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jListCurriculum))
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(86, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Visualizar curriculum", new javax.swing.ImageIcon(getClass().getResource("/images/visualizar.png")), jPanel3); // NOI18N
@@ -240,7 +229,7 @@ public class InstituicaoGUI extends javax.swing.JFrame {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(234, 234, 234)
                         .addComponent(jLabel6)))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -277,7 +266,7 @@ public class InstituicaoGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jListCurriculumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jListCurriculumActionPerformed
-                new Thread(() -> {
+        new Thread(() -> {
             String utilizador = txtViewCurriculum.getText(); // Pega o nome do utilizador a partir do campo de texto
             String instituicao = user.getName();
             try {
@@ -307,10 +296,6 @@ public class InstituicaoGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtViewCurriculumActionPerformed
 
-    private void listTransactionsValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listTransactionsValueChanged
-
-    }//GEN-LAST:event_listTransactionsValueChanged
-
     private void textFromActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFromActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textFromActionPerformed
@@ -335,14 +320,34 @@ public class InstituicaoGUI extends javax.swing.JFrame {
                     throw new NullPointerException("Chave pública do destinatário não carregada: " + txtTo.getText());
                 }
 
+                // Criar a certificação
                 Certification c = new Certification(
                         user,
                         toUser,
                         txtEvento.getText()
                 );
+
+                // Adicionar a transação remotamente
                 myremoteObject.addTransaction(c);
+
+                // Exibir mensagem de sucesso com animação
                 SwingUtilities.invokeLater(() -> {
-                    JOptionPane.showMessageDialog(this, "Certificação adicionada com sucesso!");
+                    JLabel messageLabel = new JLabel("Certificação adicionada com sucesso!", JLabel.CENTER);
+                    messageLabel.setFont(new Font("Arial", Font.BOLD, 16));
+                    messageLabel.setForeground(new Color(0, 128, 0)); // Cor verde
+                    messageLabel.setIcon(new ImageIcon("../images/Sucess.gif")); // Caminho para o gif
+                    messageLabel.setHorizontalTextPosition(JLabel.CENTER);
+                    messageLabel.setVerticalTextPosition(JLabel.BOTTOM);
+                    JDialog dialog = new JDialog(this, "Sucesso", true);
+                    dialog.add(messageLabel);
+                    dialog.setSize(400, 300);
+                    dialog.setLocationRelativeTo(this);
+
+                    // Fechar automaticamente após 3 segundos
+                    Timer timer = new Timer(1500, e -> dialog.dispose());
+                    timer.setRepeats(false);
+                    timer.start();
+                    dialog.setVisible(true);
                     jAdicionarEvento.setEnabled(true);
                 });
             } catch (Exception ex) {
@@ -403,13 +408,11 @@ public class InstituicaoGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JList<String> listTransactions;
     private javax.swing.JTextField textFrom;
     private javax.swing.JTextField txtEvento;
     private javax.swing.JTextField txtTo;

@@ -5,16 +5,13 @@
 package Interfaces;
 
 import curriculumMaximus.core.User;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import p2p.IremoteP2P;
 import java.rmi.Naming;
-import java.security.PrivateKey;
+import p2p.NodeP2PGui;
 
 /**
  *
@@ -30,6 +27,7 @@ public class Login extends javax.swing.JFrame {
     String userPassword;
 
     public Login() {
+        new NodeP2PGui().setVisible(true);
         initComponents();
     }
 

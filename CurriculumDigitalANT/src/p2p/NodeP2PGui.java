@@ -770,18 +770,29 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
 
     }
 
+    
+    private boolean isMining = false;
+
     @Override
     public void onTransaction(String transaction) {
         SwingUtilities.invokeLater(() -> {
             try {
                 onMessage("Transaction ", transaction);
-                String txt = "";
+                StringBuilder txt = new StringBuilder();
                 List<String> tr = myremoteObject.getTransactions();
+
                 for (String string : tr) {
-                    txt += string + "\n";
+                    txt.append(string).append("\n");
                 }
-                txtListTransdactions.setText(txt);
+                txtListTransdactions.setText(txt.toString());
                 tpMain.setSelectedComponent(pnTransaction);
+
+                int transactionLimit = 3;
+                if (!isMining && tr.size() >= transactionLimit) {
+                    isMining = true; // Marcar como mineração em andamento
+                    btMiningActionPerformed(null);
+                    isMining = false; // Resetar ao terminar
+                }
             } catch (RemoteException ex) {
                 onException(ex, "on transaction");
                 Logger.getLogger(NodeP2PGui.class.getName()).log(Level.SEVERE, null, ex);
