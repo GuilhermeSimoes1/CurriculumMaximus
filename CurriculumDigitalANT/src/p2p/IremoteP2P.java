@@ -16,8 +16,8 @@
 //////////////////////////////////////////////////////////////////////////////
 package p2p;
 
-import blockchain.utils.Block;
-import blockchain.utils.BlockChain;
+import blockchain.Block;
+import blockchain.BlockChain;
 import curriculumMaximus.core.Certification;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

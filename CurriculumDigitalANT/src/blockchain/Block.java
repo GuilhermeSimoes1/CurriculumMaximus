@@ -13,12 +13,12 @@
 //::                                                               (c)2022   ::
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 //////////////////////////////////////////////////////////////////////////////
-package blockchain.utils;
+package blockchain;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
-import blockchain.utils.Miner;
+import blockchain.Miner;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.ZoneOffset;

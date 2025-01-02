@@ -4,7 +4,7 @@
  */
 package p2p;
 
-import blockchain.utils.MerkleTree;
+import blockchain.MerkleTree;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;

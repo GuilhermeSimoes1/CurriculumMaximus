@@ -15,9 +15,9 @@
 //////////////////////////////////////////////////////////////////////////////
 package p2p;
 
-import blockchain.utils.Block;
-import blockchain.utils.BlockChain;
-import blockchain.utils.MerkleTree;
+import blockchain.Block;
+import blockchain.BlockChain;
+import blockchain.MerkleTree;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.net.InetAddress;
@@ -32,7 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
-import blockchain.utils.Miner;
+import blockchain.Miner;
 import utils.GuiUtils;
 import utils.RMI;
 
@@ -54,8 +54,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         txtPort.setText(10010 + port + "");
         btStartServerActionPerformed(null);
 
-        txtTranaction.setText(txtTranaction.getText() + port);
-        btAddTransactionActionPerformed(null);
 
     }
 
@@ -100,8 +98,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         jButton1 = new javax.swing.JButton();
         pnTransaction = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
-        btAddTransaction = new javax.swing.JButton();
-        txtTranaction = new javax.swing.JTextField();
         jPanel12 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtListTransdactions = new javax.swing.JTextArea();
@@ -232,25 +228,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         pnTransaction.setLayout(new java.awt.BorderLayout());
 
         jPanel6.setLayout(new java.awt.BorderLayout());
-
-        btAddTransaction.setIcon(new javax.swing.ImageIcon(getClass().getResource("/multimedia/transaction_64.png"))); // NOI18N
-        btAddTransaction.setText("Add");
-        btAddTransaction.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        btAddTransaction.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btAddTransactionActionPerformed(evt);
-            }
-        });
-        jPanel6.add(btAddTransaction, java.awt.BorderLayout.EAST);
-
-        txtTranaction.setBorder(javax.swing.BorderFactory.createTitledBorder("Transaction"));
-        txtTranaction.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTranactionActionPerformed(evt);
-            }
-        });
-        jPanel6.add(txtTranaction, java.awt.BorderLayout.CENTER);
-
         pnTransaction.add(jPanel6, java.awt.BorderLayout.PAGE_START);
 
         jPanel12.setLayout(new java.awt.BorderLayout());
@@ -505,14 +482,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
         }
     }//GEN-LAST:event_btStartServerActionPerformed
 
-    private void txtTranactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTranactionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTranactionActionPerformed
-
-    private void btAddTransactionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddTransactionActionPerformed
-
-    }//GEN-LAST:event_btAddTransactionActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -676,7 +645,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btAddTransaction;
     private javax.swing.JButton btMining;
     private javax.swing.JButton btStartServer;
     private javax.swing.JLabel imgServerRunning;
@@ -726,7 +694,6 @@ public class NodeP2PGui extends javax.swing.JFrame implements P2Plistener {
     private javax.swing.JTextPane txtServerLog;
     private javax.swing.JLabel txtTimeLog;
     private javax.swing.JLabel txtTitleLog;
-    private javax.swing.JTextField txtTranaction;
     // End of variables declaration//GEN-END:variables
 
     @Override

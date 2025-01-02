@@ -6,7 +6,6 @@
 package curriculumMaximus.core;
 
 import utils.SecurityUtils;
-import java.awt.RenderingHints.Key;
 import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;

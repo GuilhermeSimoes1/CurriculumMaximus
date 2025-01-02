@@ -18,7 +18,7 @@ package p2p;
 
 
 
-import blockchain.utils.MerkleTree;
+import blockchain.MerkleTree;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

@@ -15,8 +15,8 @@
 //////////////////////////////////////////////////////////////////////////////
 package p2p;
 
-import blockchain.utils.Block;
-import blockchain.utils.BlockChain;
+import blockchain.Block;
+import blockchain.BlockChain;
 import curriculumMaximus.core.Certification;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
-import blockchain.utils.Miner;
+import blockchain.Miner;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -62,6 +62,22 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
     private Map<String, String> instituicoes = new HashMap<>();
     private Map<String, String> utilizadores = new HashMap<>();
 
+    /**
+     * Construtor da classe OremoteP2P.
+     *
+     * <p>
+     * Inicializa um nó da rede P2P com um endereço específico e um listener
+     * para eventos. Este construtor também carrega dados previamente
+     * armazenados, incluindo usuários, instituições e transações pendentes.
+     * </p>
+     *
+     * @param address O endereço do nó no formato "host:porta".
+     * @param listener O listener responsável por capturar eventos do nó P2P,
+     * como mensagens ou atualizações da blockchain.
+     *
+     * @throws RemoteException Se ocorrer algum erro remoto durante a criação do
+     * nó.
+     */
     public OremoteP2P(String address, P2Plistener listener) throws RemoteException {
         super(RMI.getAdressPort(address));
         this.address = address;
@@ -81,6 +97,19 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Salva os dados de usuários, instituições e chaves públicas no sistema de
+     * arquivos.
+     *
+     * <p>
+     * Este método utiliza streams de saída para gravar os mapas de dados em
+     * arquivos correspondentes, garantindo a persistência das informações. Se
+     * ocorrer algum erro durante a escrita nos arquivos, uma exceção
+     * {@link IOException} será lançada.
+     * </p>
+     *
+     * @throws IOException Se ocorrer um erro ao salvar os dados nos arquivos.
+     */
     private void saveData() throws IOException {
         try (ObjectOutputStream oosUsers = new ObjectOutputStream(new FileOutputStream(USERS_FILE)); ObjectOutputStream oosInstitutions = new ObjectOutputStream(new FileOutputStream(INSTITUTIONS_FILE)); ObjectOutputStream oosPublicKeys = new ObjectOutputStream(new FileOutputStream(PUBLIC_KEYS_FILE))) {
             oosUsers.writeObject(utilizadores);
@@ -89,6 +118,21 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Carrega os dados de usuários, instituições e chaves públicas do sistema
+     * de arquivos.
+     *
+     * <p>
+     * Este método utiliza streams de entrada para ler os mapas de dados a
+     * partir de arquivos previamente gravados. Caso algum dos arquivos não seja
+     * encontrado, inicializa os mapas como vazios. Se ocorrer algum erro de
+     * leitura ou deserialização, uma exceção será lançada.
+     * </p>
+     *
+     * @throws IOException Se ocorrer um erro ao acessar ou ler os arquivos.
+     * @throws ClassNotFoundException Se o formato do objeto nos arquivos não
+     * for compatível.
+     */
     private void loadData() throws IOException, ClassNotFoundException {
         try (ObjectInputStream oisUsers = new ObjectInputStream(new FileInputStream(USERS_FILE)); ObjectInputStream oisInstitutions = new ObjectInputStream(new FileInputStream(INSTITUTIONS_FILE)); ObjectInputStream oisPublicKeys = new ObjectInputStream(new FileInputStream(PUBLIC_KEYS_FILE))) {
             utilizadores = (Map<String, String>) oisUsers.readObject();
@@ -101,6 +145,20 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Carrega as transações pendentes do sistema de arquivos.
+     *
+     * <p>
+     * Este método utiliza um stream de entrada para ler o conjunto de
+     * transações pendentes a partir de um arquivo previamente gravado. Caso o
+     * arquivo não seja encontrado, inicializa o conjunto de transações como
+     * vazio.
+     * </p>
+     *
+     * @throws IOException Se ocorrer um erro ao acessar ou ler o arquivo.
+     * @throws ClassNotFoundException Se o formato do objeto no arquivo não for
+     * compatível.
+     */
     private void loadPendingTransactions() throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PENDING_TRANSACTIONS_FILE))) {
             transactions.addAll((CopyOnWriteArraySet<String>) ois.readObject());
@@ -110,12 +168,33 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Salva as transações pendentes no sistema de arquivos.
+     *
+     * <p>
+     * Este método utiliza um stream de saída para gravar o conjunto de
+     * transações pendentes em um arquivo, garantindo a persistência das
+     * informações.
+     * </p>
+     *
+     * @throws IOException Se ocorrer um erro ao gravar os dados no arquivo.
+     */
     private void savePendingTransactions() throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PENDING_TRANSACTIONS_FILE))) {
             oos.writeObject(transactions);
         }
     }
 
+    /**
+     * Retorna o endereço do nó atual.
+     *
+     * <p>
+     * O endereço é usado para identificar o nó na rede P2P.
+     * </p>
+     *
+     * @return O endereço do nó como uma string no formato "host:porta".
+     * @throws RemoteException Se ocorrer um erro remoto ao obter o endereço.
+     */
     @Override
     public String getAdress() throws RemoteException {
         return address;
@@ -144,6 +223,20 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         return false;
     }
 
+    /**
+     * Adiciona um nó à rede P2P.
+     *
+     * <p>
+     * Este método verifica se o nó já está presente na rede. Caso contrário,
+     * adiciona o nó à lista de nós conectados, propaga a informação para os
+     * demais nós da rede, sincroniza as transações e a blockchain, e solicita a
+     * sincronização de dados.
+     * </p>
+     *
+     * @param node O nó a ser adicionado à rede.
+     * @throws RemoteException Se ocorrer um erro remoto ao interagir com os
+     * nós.
+     */
     @Override
     public void addNode(IremoteP2P node) throws RemoteException {
         //se já tiver o nó  ---  não faz nada
@@ -170,6 +263,17 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
 
     }
 
+    /**
+     * Retorna a lista de nós conectados à rede P2P.
+     *
+     * <p>
+     * A lista retornada é uma cópia da lista interna, garantindo que alterações
+     * externas não afetem a lista original.
+     * </p>
+     *
+     * @return Uma lista de nós conectados à rede.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar os nós.
+     */
     @Override
     public List<IremoteP2P> getNetwork() throws RemoteException {
         return new ArrayList<>(network);
@@ -178,10 +282,37 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //::::::::            T R A N S A C T I O N S       ::::::::::::::::::
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    /**
+     * Retorna o número de transações pendentes.
+     *
+     * <p>
+     * Este método obtém o tamanho do conjunto de transações pendentes
+     * armazenado localmente.
+     * </p>
+     *
+     * @return O número de transações pendentes.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar o conjunto
+     * de transações.
+     */
     public int getTransactionsSize() throws RemoteException {
         return transactions.size();
     }
 
+    /**
+     * Adiciona uma nova transação à rede P2P.
+     *
+     * <p>
+     * Este método verifica se a transação já existe no conjunto de transações
+     * pendentes. Caso contrário, adiciona a transação localmente, salva o
+     * estado no arquivo de transações pendentes e propaga a transação para os
+     * demais nós da rede.
+     * </p>
+     *
+     * @param certification O objeto {@code Certification} representando a
+     * transação a ser adicionada.
+     * @throws RemoteException Se ocorrer um erro remoto ao adicionar a
+     * transação.
+     */
     @Override
     public void addTransaction(Certification certification) throws RemoteException {
         String data = certification.toString();
@@ -200,11 +331,36 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Retorna a lista de transações pendentes no nó atual.
+     *
+     * <p>
+     * Este método cria uma cópia da coleção de transações pendentes armazenadas
+     * localmente para evitar alterações externas na lista original.
+     * </p>
+     *
+     * @return Uma lista de strings representando as transações pendentes.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar as
+     * transações.
+     */
     @Override
     public List<String> getTransactions() throws RemoteException {
         return new ArrayList<>(transactions);
     }
 
+    /**
+     * Retorna as transações relacionadas a um usuário específico.
+     *
+     * <p>
+     * Este método busca todas as transações associadas ao nome do usuário na
+     * blockchain local e retorna-as numa lista.
+     * </p>
+     *
+     * @param userName O nome do usuário cujas transações serão buscadas.
+     * @return Uma lista de strings representando as transações do usuário.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar as
+     * transações.
+     */
     @Override
     public List<String> getUserTransactions(String userName) throws RemoteException {
         List<String> userTransactions = new ArrayList<>();
@@ -221,6 +377,22 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         return userTransactions;
     }
 
+    /**
+     * Retorna as transações relacionadas a um usuário e uma instituição
+     * específicos.
+     *
+     * <p>
+     * Este método busca todas as transações que envolvem o nome do usuário e da
+     * instituição na blockchain local e as retorna em uma lista.
+     * </p>
+     *
+     * @param userName O nome do usuário cujas transações serão buscadas.
+     * @param instName O nome da instituição relacionada às transações.
+     * @return Uma lista de strings representando as transações do usuário para
+     * a instituição.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar as
+     * transações.
+     */
     public List<String> getUserTransactionsInstitution(String userName, String instName) throws RemoteException {
         List<String> userTransactionsInst = new ArrayList<>();
 
@@ -236,6 +408,20 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         return userTransactionsInst;
     }
 
+    /**
+     * Sincroniza as transações pendentes com outro nó na rede.
+     *
+     * <p>
+     * Este método compara o conjunto de transações pendentes local com as do nó
+     * especificado. Caso haja transações novas, estas são adicionadas ao
+     * conjunto local e propagadas para outros nós da rede, garantindo a
+     * sincronização completa.
+     * </p>
+     *
+     * @param node O nó com o qual as transações serão sincronizadas.
+     * @throws RemoteException Se ocorrer um erro remoto durante a
+     * sincronização.
+     */
     @Override
     public void synchronizeTransactions(IremoteP2P node) throws RemoteException {
         //tamanho anterior
@@ -255,7 +441,7 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
             for (IremoteP2P iremoteP2P : network) {
                 //se o tamanho for menor
                 if (iremoteP2P.getTransactionsSize() < newSize) {
-                    //cincronizar-se com o no actual
+                    //sincronizar-se com o no actual
                     p2pListener.onMessage("sinchronizeTransactions", " iremoteP2P.sinchronizeTransactions(this)");
                     iremoteP2P.synchronizeTransactions(this);
                 }
@@ -264,6 +450,20 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
 
     }
 
+    /**
+     * Remove uma lista de transações do conjunto de transações pendentes.
+     *
+     * <p>
+     * Este método remove as transações especificadas do conjunto local, salva o
+     * estado atualizado no arquivo de transações pendentes, e propaga a remoção
+     * para os demais nós da rede. Apenas transações que ainda existem são
+     * removidas.
+     * </p>
+     *
+     * @param myTransactions A lista de transações a serem removidas.
+     * @throws RemoteException Se ocorrer um erro remoto ao sincronizar a
+     * remoção com outros nós.
+     */
     @Override
     public void removeTransactions(List<String> myTransactions) throws RemoteException {
         transactions.removeAll(myTransactions);
@@ -284,6 +484,21 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Inicia o processo de mineração de um bloco com uma mensagem e uma
+     * dificuldade específica.
+     *
+     * <p>
+     * O método inicia o minerador local e envia comandos para que outros nós na
+     * rede também comecem a minerar a mesma mensagem com a mesma dificuldade,
+     * caso ainda não estejam minerando.
+     * </p>
+     *
+     * @param msg A mensagem a ser minerada.
+     * @param zeros O número de zeros necessários no hash para validar o bloco.
+     * @throws RemoteException Se ocorrer um erro remoto durante a comunicação
+     * com outros nós.
+     */
     @Override
     public void startMining(String msg, int zeros) throws RemoteException {
         try {
@@ -305,6 +520,20 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
 
     }
 
+    /**
+     * Para o processo de mineração e propaga a interrupção para outros nós da
+     * rede.
+     *
+     * <p>
+     * Este método interrompe o minerador local, utilizando o nonce fornecido
+     * como resultado, e informa os outros nós para também interromperem suas
+     * operações de mineração.
+     * </p>
+     *
+     * @param nonce O nonce calculado para interromper o processo de mineração.
+     * @throws RemoteException Se ocorrer um erro remoto ao comunicar a
+     * interrupção para outros nós.
+     */
     @Override
     public void stopMining(int nonce) throws RemoteException {
         //parar o mineiro e distribuir o nonce
@@ -319,6 +548,21 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Realiza a mineração de um bloco com uma mensagem e dificuldade
+     * específicas.
+     *
+     * <p>
+     * Este método inicia o processo de mineração localmente e espera até que o
+     * nonce válido seja calculado. Retorna o nonce gerado após a conclusão do
+     * processo.
+     * </p>
+     *
+     * @param msg A mensagem a ser minerada.
+     * @param zeros O número de zeros necessários no hash para validar o bloco.
+     * @return O nonce calculado para o bloco minerado.
+     * @throws RemoteException Se ocorrer um erro remoto durante a mineração.
+     */
     @Override
     public int mine(String msg, int zeros) throws RemoteException {
         try {
@@ -333,6 +577,14 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
 
     }
 
+    /**
+     * Verifica se o nó atual está a realizar a mineração.
+     *
+     * @return {@code true} se o nó está a minerar, {@code false} caso
+     * contrário.
+     * @throws RemoteException Se ocorrer um erro remoto ao verificar o estado
+     * da mineração.
+     */
     @Override
     public boolean isMining() throws RemoteException {
         return myMiner.isMining();
@@ -342,6 +594,21 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
     //::::::::::::::::: B L O C K C H A I N :::::::::::::::::::::::::::::::::::::::
     //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //////////////////////////////////////////////////////////////////////////////
+    /**
+     * Adiciona um bloco à blockchain local e propaga a atualização para os
+     * outros nós da rede.
+     *
+     * <p>
+     * Este método verifica a validade do bloco e insere-o na blockchain local
+     * se ele for válido e encaixar corretamente na cadeia existente. Também
+     * propaga a adição para outros nós e realiza a sincronização da blockchain,
+     * caso necessário.
+     * </p>
+     *
+     * @param b O bloco a ser adicionado.
+     * @throws RemoteException Se o bloco for inválido ou ocorrer um erro
+     * remoto.
+     */
     @Override
     public void addBlock(Block b) throws RemoteException {
         try {
@@ -376,21 +643,54 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Retorna o tamanho atual da blockchain local.
+     *
+     * @return O número de blocos na blockchain.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar a
+     * blockchain.
+     */
     @Override
     public int getBlockchainSize() throws RemoteException {
         return myBlockchain.getSize();
     }
 
+    /**
+     * Retorna o hash do último bloco na blockchain local.
+     *
+     * @return O hash do último bloco.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar a
+     * blockchain.
+     */
     @Override
     public String getBlockchainLastHash() throws RemoteException {
         return myBlockchain.getLastBlockHash();
     }
 
+    /**
+     * Retorna a blockchain local.
+     *
+     * @return A blockchain como um objeto {@link BlockChain}.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar a
+     * blockchain.
+     */
     @Override
     public BlockChain getBlockchain() throws RemoteException {
         return myBlockchain;
     }
 
+    /**
+     * Sincroniza a blockchain local com os nós da rede.
+     *
+     * <p>
+     * Este método verifica se há uma blockchain maior e válida em outros nós da
+     * rede. Caso encontre, substitui a blockchain local pela versão remota
+     * válida.
+     * </p>
+     *
+     * @throws RemoteException Se ocorrer um erro remoto durante a
+     * sincronização.
+     */
     @Override
     public void synchnonizeBlockchain() throws RemoteException {
         //para todos os nodos da rede
@@ -409,6 +709,13 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Retorna todas as transações na blockchain local.
+     *
+     * @return Uma lista contendo todas as transações da blockchain.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar a
+     * blockchain.
+     */
     @Override
     public List<String> getBlockchainTransactions() throws RemoteException {
         ArrayList<String> allTransactions = new ArrayList<>();
@@ -418,6 +725,21 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         return allTransactions;
     }
 
+    /**
+     * Registra um novo usuário na rede P2P.
+     *
+     * <p>
+     * O método verifica se o nome já está registrado. Caso não esteja, adiciona
+     * o usuário ao sistema, salva os dados localmente, e grava a chave pública
+     * em um arquivo.
+     * </p>
+     *
+     * @param nome O nome do usuário a ser registrado.
+     * @param publicKey A chave pública associada ao usuário.
+     * @param password A senha do usuário.
+     * @throws RemoteException Se o nome já estiver registrado ou ocorrer um
+     * erro remoto.
+     */
     @Override
     public void registerUser(String nome, PublicKey publicKey, String password) throws RemoteException {
         if (utilizadores.containsKey(nome)) {
@@ -434,6 +756,21 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Registra uma nova instituição na rede P2P.
+     *
+     * <p>
+     * O método verifica se o nome já está registrado. Caso não esteja, adiciona
+     * a instituição ao sistema, salva os dados localmente, e grava a chave
+     * pública em um arquivo.
+     * </p>
+     *
+     * @param nome O nome da instituição a ser registrada.
+     * @param publicKey A chave pública associada à instituição.
+     * @param password A senha da instituição.
+     * @throws RemoteException Se o nome já estiver registrado ou ocorrer um
+     * erro remoto.
+     */
     @Override
     public void registerInstituicao(String nome, PublicKey publicKey, String password) throws RemoteException {
         if (instituicoes.containsKey(nome)) {
@@ -450,32 +787,84 @@ public class OremoteP2P extends UnicastRemoteObject implements IremoteP2P {
         }
     }
 
+    /**
+     * Verifica se uma instituição pode fazer login no sistema.
+     *
+     * @param nome O nome da instituição.
+     * @param password A senha da instituição.
+     * @return {@code true} se as credenciais forem válidas, {@code false} caso
+     * contrário.
+     * @throws RemoteException Se ocorrer um erro remoto ao verificar as
+     * credenciais.
+     */
     @Override
     public boolean loginInstituicao(String nome, String password) throws RemoteException {
         return instituicoes.containsKey(nome) && instituicoes.get(nome).equals(password);
     }
 
+    /**
+     * Verifica se um utilizador pode fazer login no sistema.
+     *
+     * @param nome O nome do utilizador.
+     * @param password A senha do utilizador.
+     * @return {@code true} se as credenciais forem válidas, {@code false} caso
+     * contrário.
+     * @throws RemoteException Se ocorrer um erro remoto ao verificar as
+     * credenciais.
+     */
     @Override
     public boolean loginUtilizador(String nome, String password) throws RemoteException {
         return utilizadores.containsKey(nome) && utilizadores.get(nome).equals(password);
     }
 
+    /**
+     * Retorna os usuários registrados no sistema.
+     *
+     * @return Um mapa contendo os nomes dos usuários e suas respectivas senhas.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar os dados.
+     */
     // Métodos de sincronização
     @Override
     public Map<String, String> getUtilizadores() throws RemoteException {
         return new HashMap<>(utilizadores);
     }
 
+    /**
+     * Retorna as instituições registradas no sistema.
+     *
+     * @return Um mapa contendo os nomes das instituições e suas respectivas
+     * senhas.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar os dados.
+     */
     @Override
     public Map<String, String> getInstituicoes() throws RemoteException {
         return new HashMap<>(instituicoes);
     }
 
+    /**
+     * Retorna as chaves públicas registradas no sistema.
+     *
+     * @return Um mapa contendo os nomes e suas respectivas chaves públicas.
+     * @throws RemoteException Se ocorrer um erro remoto ao acessar os dados.
+     */
     @Override
     public Map<String, PublicKey> getPublicKeys() throws RemoteException {
         return new HashMap<>(publicKeys);
     }
 
+    /**
+     * Sincroniza os dados (usuários, instituições e chaves públicas) com outro
+     * nó da rede.
+     *
+     * <p>
+     * Este método mescla os dados locais com os do nó remoto e salva os dados
+     * sincronizados localmente.
+     * </p>
+     *
+     * @param node O nó remoto com o qual os dados serão sincronizados.
+     * @throws RemoteException Se ocorrer um erro remoto durante a
+     * sincronização.
+     */
     @Override
     public void synchronizeData(IremoteP2P node) throws RemoteException {
         // Sincronizar utilizadores

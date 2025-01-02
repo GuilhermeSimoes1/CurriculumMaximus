@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////////
 package p2p;
 
-import blockchain.utils.BlockChain;
+import blockchain.BlockChain;
 
 /**
  * Created on 27/11/2024, 19:46:43
